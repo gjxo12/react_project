@@ -1,7 +1,10 @@
 import React from 'react';
 //import Glass from "./Glass";  // Glass js를 여기서 사용하겠다.
-import PropTypes from 'prop-types';
+//import PropTypes from 'prop-types';
 import Axios from "axios";
+import Movie from "./Movie";
+import "./Movie.css"
+
 /*
 const somedata = [
     {
@@ -81,23 +84,58 @@ class App extends React.Component{
   */
 
   get_list = async () =>{
-    const list = await Axios.get("https://yts-proxy.now.sh/list_movies.json"); // fetch와 같은 역할, 해당 URL의 정보를 읽음
-  } 
+    const {
+      data: {
+            data: {movies}
+            } //es6문법을 이용하여 json에서 data의 data의 movis 목록을 가져옴
+        } = await Axios.get("https://yts-proxy.now.sh/list_movies.json?sort_by=year"); // fetch와 같은 역할, 해당 URL의 정보를 읽음
+    console.log(movies) // 이 영화목록들을 state의 move_list에 넣어야함
+    //console.log('const변수명'.data.data.movies)  // 일반적인 접근 방법
+    this.setState({movie_list:movies ,isloading:false}) 
+    // 영화목록을 받아 데이터를 넣고 loading 값을 변경!! -> 데이터를 받으면 문자열이 바뀜
+    // state의 변수명과 다를때 이렇게 사용, 같으면 그냥 이름만 사용하면 react가 자동으로 해석함, 
+  };
 
   componentDidMount(){
-    setTimeout( () => {
-      this.setState({isloading: false});
-    },3000)
+    // setTimeout( () => {
+    //   this.setState({isloading: false});
+    // },3000)
     this.get_list();
   }
-  render(){
-    return <div>
-      {this.state.isloading ? "Wating..." : "Go!!!!!"}
-    </div> 
+  get_start(movie){
 
+  }
+
+
+  render(){
+    const {isloading,movie_list} = this.state;
+    return <section class = "container">
+      {isloading ? <div class = "loader">
+        <span class = "loader_text">
+          Loading......
+        </span>
+      </div>
+      : (
+       <div class = "movies">
+         {movie_list.map(movie => (
+      <Movie 
+          key = {movie.id}
+          id={movie.id} 
+          year={movie.year} 
+          title={movie.title} 
+          summary={movie.summary} 
+          poster={movie.medium_cover_image}
+          language ={movie.language}
+          kind = {movie.genres} 
+          />
+         ))}
+      </div> 
+      )} 
+    </section> 
   };
 }
 //function component는 무언가를 return하고 class 는 react.componet로부터 확장되고 screen에 표시 -> 그걸 render메서드에 넣어야함-> 자동으로 실행함 
 //state는 object, 데이터는 변함 그래서 state사용 setstate를 통해 state를 refresh하고 render를 다시 호출함
 //class componet의 라이프 사이클로 render 전과 후에 실행되는 함수가 있음(mount,update) 확인하면 됨
+//render에서 Movie 를 호출할때, ,movie는 movie_list state의 값이며 여기는 JSON에 명시된 객체명을 호출해서 보내야함!!!! 안그러면 에러
 export default App;
