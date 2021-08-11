@@ -26,7 +26,8 @@ Movie.PropType={
     summary: PropType.string.isRequired,
     poster: PropType.string.isRequired,
     language: PropType.string.isRequired,
-    kind: PropType.arrayOf(PropType.string).isRequired
+    kind: PropType.arrayOf(PropType.string).isRequired,
+    kytae: PropType.string.isRequired
 }// 우리가 얻어올 props 타입을 설정해주기, api에서 확인가능
 
 export default Movie;
